@@ -11,32 +11,33 @@ import CoreData
 
 func createAllThePokemons () {
 
-    createPokemon(name: "Abra", with: "abra")
-    createPokemon(name: "Bellsprout", with: "bellsprout")
-    createPokemon(name: "Bullbasaur", with: "bullbasaur")
-    createPokemon(name: "Caterpie", with: "caterpie")
-    createPokemon(name: "Charmander", with: "charmander")
-    createPokemon(name: "Jigglypuff", with: "jigglypuff")
-    createPokemon(name: "Meowth", with: "meowth")
-    createPokemon(name: "Mew", with: "mew")
-    createPokemon(name: "Pikachu", with: "pikachu-2")
-    createPokemon(name: "Squirtle", with: "squirtle")
-    createPokemon(name: "Snorlax", with: "snorlax")
-    createPokemon(name: "Zubat", with: "zubat")
-    createPokemon(name: "Venonat", with: "venonat")
-    createPokemon(name: "Weedle", with: "weedle")
+    createPokemon(name: "Abra", with: "abra", frequency: 70)
+    createPokemon(name: "Bellsprout", with: "bellsprout", frequency: 80)
+    createPokemon(name: "Bullbasaur", with: "bullbasaur", frequency: 22)
+    createPokemon(name: "Caterpie", with: "caterpie", frequency: 92)
+    createPokemon(name: "Charmander", with: "charmander", frequency: 17)
+    createPokemon(name: "Jigglypuff", with: "jigglypuff", frequency: 67)
+    createPokemon(name: "Meowth", with: "meowth", frequency: 62)
+    createPokemon(name: "Mew", with: "mew", frequency: 1)
+    createPokemon(name: "Pikachu", with: "pikachu-2", frequency: 8)
+    createPokemon(name: "Squirtle", with: "squirtle", frequency: 20)
+    createPokemon(name: "Snorlax", with: "snorlax", frequency: 3)
+    createPokemon(name: "Zubat", with: "zubat", frequency: 100)
+    createPokemon(name: "Venonat", with: "venonat", frequency: 76)
+    createPokemon(name: "Weedle", with: "weedle", frequency: 88)
     
    (UIApplication.shared.delegate as! AppDelegate).saveContext()
     
 }
 
 
-func createPokemon(name:String, with imageNamed:String ){
+func createPokemon(name:String, with imageNamed:String, frequency: Int ){
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     let pokemon = Pokemon(context: context)
     pokemon.name = name
     pokemon.imageFileName = imageNamed
+    pokemon.frequency = Int16(frequency)
 }
 
 /*func createAndCaughtPokemon(name:String, with imageNamed:String){

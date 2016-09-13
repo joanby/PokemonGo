@@ -21,9 +21,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
     
     let captureDistance : CLLocationDistance = 150
     
-    var pokemonSpawnTimer : TimeInterval = 5
+    var pokemonSpawnTimer : TimeInterval = 30
     
     var pokemons : [Pokemon] = []
+    
+    var totalFrequency = 0
+    
+    var hasStartedTheMap = false
+    
+    var hasMovedToAnotherView = false
+    
+    var timer : Timer!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +40,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         
        
         self.pokemons = getAllThePokemons()
-                
+        
+        for p in self.pokemons {
+            totalFrequency += Int(p.frequency)
+        }
+        
+        
         
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse {
 
@@ -72,18 +85,54 @@ class ViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDele
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.timer.invalidate()
+        self.hasMovedToAnotherView = true
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if self.hasMovedToAnotherView {
+            self.startTimer()
+        }
+    }
+    
+    
+    
     func setupMap() {
         
-        self.mapView.delegate = self
-        self.mapView.showsUserLocation = true
-        self.manager.startUpdatingLocation()
+        if !self.hasStartedTheMap {
         
-        Timer.scheduledTimer(withTimeInterval: pokemonSpawnTimer, repeats: true, block: { (timer) in
+            self.hasStartedTheMap = true
+            
+            self.mapView.delegate = self
+            self.mapView.showsUserLocation = true
+            self.manager.startUpdatingLocation()
+            
+            self.startTimer()
+        }
+    }
+    
+    
+    func startTimer() {
+        self.timer = Timer.scheduledTimer(withTimeInterval: pokemonSpawnTimer, repeats: true, block: { (timer) in
             
             if let coordinate = self.manager.location?.coordinate {
                 
-                let randomPos = Int(arc4random_uniform(UInt32(self.pokemons.count)))
-                let pokemon = self.pokemons[randomPos]
+                let randomNumber = Int(arc4random_uniform(UInt32(self.totalFrequency)))
+                
+                var pokemonFrequenciesAcum = 0
+                
+                var pokemon : Pokemon = self.pokemons[0]
+                for p in self.pokemons {
+                    pokemon = p
+                    pokemonFrequenciesAcum += Int(p.frequency)
+                    if pokemonFrequenciesAcum >= randomNumber {
+                        break
+                    }
+                }
+                
                 
                 let annotation = PokemonAnnotation(coordinate: coordinate, pokemon: pokemon)
                 annotation.coordinate.latitude += (Double(arc4random_uniform(1000)) - 500.0)/400000.0
